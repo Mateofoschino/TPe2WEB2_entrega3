@@ -3,13 +3,12 @@ require_once 'app/api/abstractApiController.php';
 require_once 'app/models/goleadores.model.php';
 require_once 'app/api/api.view.php';
 
-class ApiController extends abstractApiController
-{
-
-    public function __construct()
-    {
+class ApiController extends abstractApiController {
+    
+    public function __construct() {
         parent::__construct();
         $this->model = new goleadoresModel();
+        
     }
 
     // $params al poder ser null puede ser invocado para listar todo o
@@ -17,9 +16,16 @@ class ApiController extends abstractApiController
 
     public function getAll($params = null)
     {
+        $parametros = [];
+        if (isset($_GET['order'])) {
+            $parametros['order']=$_GET['order'];
+        }
+        if (isset($_GET['sort'])) {
+            $parametros['sort']=$_GET['sort'];
+        }
 
-        if (empty($params)) {
-            $goleadores = $this->model->getGoleadores();
+        if (!isset($params[':ID'])) {
+            $goleadores = $this->model->getGoleadores($parametros);
             $this->view->response($goleadores, 200);
         } else {
             $idGoleador = $params[':ID'];
@@ -32,23 +38,18 @@ class ApiController extends abstractApiController
         }
     }
 
-    public function delete($params = null)
-    {
-        if (empty($params)) {
-            $this->view->response("Inserte un ID", 400);
+    public function delete($params=null) {
+        $idGoleador=$params[':ID'];
+        $success = $this->model->deleteGoleador($params[':ID']);
+        if (!$success) {
+            $this->view->response("El jugador con el id =$idGoleador no existe",404);
         } else {
-            $idGoleador = $params[':ID'];
-            $success = $this->model->deleteGoleador($params[':ID']);
-            if (!$success) {
-                $this->view->response("El jugador con el id =$idGoleador no existe", 404);
-            } else {
-                $this->view->response("El jugador con el id=$idGoleador se borro exitosamente", 200);
-            }
+            $this->view->response("El jugador con el id=$idGoleador se borro exitosamente",200);
         }
+        
     }
 
-    public function add()
-    {
+    public function add(){
         $body = $this->getData();
 
         $nombre = $body->Nombre;
@@ -56,33 +57,14 @@ class ApiController extends abstractApiController
         $goles = $body->Goles;
         $pj = $body->PJ;
 
-        $id = $this->model->insertGoleador($nombre, $club, $goles, $pj);
+        $id = $this->model->insertGoleador($nombre,$club,$goles,$pj);
 
         if ($id) {
-            $this->view->response("El goleador fue creado con exito", 201);
+            $this->view->response("El goleador fue creado con exito",200);
         } else {
-            $this->view->response("El goleador no fue creado", 404);
+            $this->view->response("El goleador no fue creado",404);
         }
     }
 
-    public function modify($params = null)
-    {
-        if (empty($params)) {
-            $this->view->response("Inserte un ID para modificar", 400);
-        } else {
-            $idGoleador = $params[':ID'];
-            $jugador = $this->model->getDetailsById($idGoleador);
-            if ($jugador) {
-                $body = $this->getData();
-                $nombre = $body->Nombre;
-                $club = $body->Club;
-                $goles = $body->Goles;
-                $pj = $body->PJ;
-                $success = $this->model->modifyGoleador($nombre, $club, $goles, $pj, $idGoleador);
-                $this->view->response("El jugador fue modificado con exito", 201);
-            } else {
-                $this->view->response("El jugador con el id =$idGoleador no existe", 404);
-            }
-        }
-    }
+
 }
