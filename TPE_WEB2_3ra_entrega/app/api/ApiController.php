@@ -11,6 +11,26 @@ class ApiController extends abstractApiController {
         
     }
 
+    // $params al poder ser null puede ser invocado para listar todo o
+    // para listar 1
+
+    public function getAll($params = null) {
+
+        if (empty($params)) {
+            $goleadores = $this->model->getGoleadores();
+            $this->view->response($goleadores,200);
+        } else {
+            $idGoleador = $params[':ID'];
+            $goleador = $this->model->getDetailsById($idGoleador);
+            if ($goleador) {
+                $this->view->response($goleador,200);
+            } else {
+                $this->view->response("El goleador con el id=$idGoleador no existe",404);
+            }
+        }
+        
+    }
+
     public function delete($params=null) {
         $idGoleador=$params[':ID'];
         $success = $this->model->deleteGoleador($params[':ID']);
