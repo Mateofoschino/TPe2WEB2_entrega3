@@ -15,8 +15,17 @@ class goleadoresModel extends Model{
         return $clubes;
     }
 
-    function getGoleadores() {
-        $query = $this->db->prepare('SELECT * FROM goleadores');
+    function getGoleadores($parametros)
+    {
+        $sql = 'SELECT * FROM goleadores';
+        if (isset($parametros['order'])) {
+            $sql .= ' ORDER BY ' . $parametros['order'];
+            if (isset($parametros['sort'])) {
+                $sql .= ' '.$parametros['sort'];
+            }
+        }
+
+        $query = $this->db->prepare($sql);
         $query->execute();
         $goleadores = $query->fetchAll(PDO::FETCH_OBJ);
 
