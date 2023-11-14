@@ -11,4 +11,4 @@ Eliminar un goleador por ID -> DELETE -> goleadores/:ID -> delete
 
 El método delete y put tienen en el router, una opción para contemplar los casos donde no se le agregue id, y es exclusivamente para dar error, e incitar a que pongan id.
 
-Si se llama o no con ID, se dirige a la misma función y ahí dentro verificamos si traemos a todos los jugadores, o a uno solo (correspondiente al ID ingresado).
+Si se llama a la función GET con o sin ID, se dirige a la misma función y ahí dentro verificamos si traemos a todos los jugadores, o a uno solo (correspondiente al ID ingresado).
