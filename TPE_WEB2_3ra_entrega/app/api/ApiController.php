@@ -37,20 +37,6 @@ class ApiController extends abstractApiController
         }
     }
 
-    public function delete($params = null)
-    {
-        if (empty($params)) {
-            $this->view->response("Inserte un ID", 400);
-        } else {
-            $idGoleador = $params[':ID'];
-            $success = $this->model->deleteGoleador($params[':ID']);
-            if (!$success) {
-                $this->view->response("El jugador con el id =$idGoleador no existe", 404);
-            } else {
-                $this->view->response("El jugador con el id=$idGoleador se borro exitosamente", 200);
-            }
-        }
-    }
 
     public function add()
     {
